@@ -1,6 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/util/io/src/service_mio.rs`."><title>service_mio.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="io" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0-nightly (b11fbfbf3 2024-02-03)" data-channel="nightly" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../io/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/util/io/src/service_mio.rs`."><title>service_mio.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="io" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (854f22563 2025-01-31)" data-channel="nightly" data-search-js="search-2d513d54.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-302de22f.js"></script><script defer src="../../static.files/src-script-8fee9dc5.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9b5d7e41.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">io/</div>service_mio.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -791,7 +790,8 @@
 <a href="#789" id="789">789</a>
 <a href="#790" id="790">790</a>
 <a href="#791" id="791">791</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright 2015-2018 Parity Technologies (UK) Ltd.
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a></pre></div><pre class="rust"><code><span class="comment">// Copyright 2015-2018 Parity Technologies (UK) Ltd.
 // This file is part of Parity.
 
 // Parity is free software: you can redistribute it and/or modify
@@ -812,18 +812,15 @@
 // See http://www.gnu.org/licenses/
 
 </span><span class="kw">use crate</span>::{
+    mio_util::{EventLoop, EventLoopBuilder, Handler, Sender},
     worker::{SocketWorker, Work, WorkType, Worker},
     IoError, IoHandler,
 };
-<span class="kw">use </span>crossbeam_deque;
 <span class="kw">use </span>lazy_static::lazy_static;
 <span class="kw">use </span>log::{debug, error, trace, warn};
 <span class="kw">use </span>metrics::{register_meter_with_group, Meter, MeterTimer};
-<span class="kw">use </span>mio::{
-    deprecated::{EventLoop, EventLoopBuilder, Handler, Sender},
-    timer::Timeout,
-    <span class="kw-2">*</span>,
-};
+<span class="kw">use </span>mio::{Events, Poll, Registry, Token, Waker};
+<span class="kw">use </span>mio_timer::Timeout;
 <span class="kw">use </span>parking_lot::{Mutex, RwLock};
 <span class="kw">use </span>slab::Slab;
 <span class="kw">use </span>std::{
@@ -836,7 +833,7 @@
 <span class="comment">// FIXME: Use a enum type instead for function calls.
 </span><span class="doccomment">/// Timer ID
 </span><span class="kw">pub type </span>TimerToken = usize;
-<span class="doccomment">/// Timer ID
+<span class="doccomment">/// Stream ID
 </span><span class="kw">pub type </span>StreamToken = usize;
 <span class="doccomment">/// IO Handler ID
 </span><span class="kw">pub type </span>HandlerId = usize;
@@ -845,16 +842,14 @@
 </span><span class="kw">pub const </span>TOKENS_PER_HANDLER: usize = <span class="number">16384</span>;
 <span class="kw">const </span>MAX_HANDLERS: usize = <span class="number">8</span>;
 
-<span class="macro">lazy_static! </span>{
+<span class="macro">lazy_static!</span> {
     <span class="kw">static </span><span class="kw-2">ref </span>NET_POLL_THREAD_TIMER: Arc&lt;<span class="kw">dyn </span>Meter&gt; =
         register_meter_with_group(<span class="string">"timer"</span>, <span class="string">"service_mio::network_poll_thread"</span>);
 }
 
 <span class="doccomment">/// Messages used to communicate with the event loop from other threads.
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub enum </span>IoMessage&lt;Message&gt;
-<span class="kw">where </span>Message: Send + Sized
-{
+</span><span class="kw">pub enum </span>IoMessage&lt;Message: Send + Sized&gt; {
     <span class="doccomment">/// Shutdown the event loop
     </span>Shutdown,
     <span class="doccomment">/// Register a new protocol handler.
@@ -905,7 +900,7 @@
 <span class="kw">where </span>Message: Send + Sync + <span class="lifetime">'static
 </span>{
     channel: IoChannel&lt;Message&gt;,
-    handler: HandlerId,
+    handler_id: HandlerId,
 }
 
 <span class="kw">impl</span>&lt;Message&gt; IoContext&lt;Message&gt;
@@ -916,7 +911,10 @@
     </span><span class="kw">pub fn </span>new(
         channel: IoChannel&lt;Message&gt;, handler: HandlerId,
     ) -&gt; IoContext&lt;Message&gt; {
-        IoContext { handler, channel }
+        IoContext {
+            handler_id: handler,
+            channel,
+        }
     }
 
     <span class="doccomment">/// Register a new recurring IO timer. 'IoHandler::timeout' will be called
@@ -927,7 +925,7 @@
         <span class="self">self</span>.channel.send_io(IoMessage::AddTimer {
             token,
             delay,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
             once: <span class="bool-val">false</span>,
             cancel_all: <span class="bool-val">false</span>,
         })<span class="question-mark">?</span>;
@@ -942,7 +940,7 @@
         <span class="self">self</span>.channel.send_io(IoMessage::AddTimer {
             token,
             delay,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
             once: <span class="bool-val">true</span>,
             cancel_all: <span class="bool-val">true</span>,
         })<span class="question-mark">?</span>;
@@ -958,7 +956,7 @@
         <span class="self">self</span>.channel.send_io(IoMessage::AddTimer {
             token,
             delay,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
             once: <span class="bool-val">true</span>,
             cancel_all: <span class="bool-val">false</span>,
         })<span class="question-mark">?</span>;
@@ -969,7 +967,7 @@
     </span><span class="kw">pub fn </span>clear_timer(<span class="kw-2">&amp;</span><span class="self">self</span>, token: TimerToken) -&gt; <span class="prelude-ty">Result</span>&lt;(), IoError&gt; {
         <span class="self">self</span>.channel.send_io(IoMessage::RemoveTimer {
             token,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
@@ -978,7 +976,7 @@
     </span><span class="kw">pub fn </span>register_stream(<span class="kw-2">&amp;</span><span class="self">self</span>, token: StreamToken) -&gt; <span class="prelude-ty">Result</span>&lt;(), IoError&gt; {
         <span class="self">self</span>.channel.send_io(IoMessage::RegisterStream {
             token,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
@@ -987,7 +985,7 @@
     </span><span class="kw">pub fn </span>deregister_stream(<span class="kw-2">&amp;</span><span class="self">self</span>, token: StreamToken) -&gt; <span class="prelude-ty">Result</span>&lt;(), IoError&gt; {
         <span class="self">self</span>.channel.send_io(IoMessage::DeregisterStream {
             token,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
@@ -998,7 +996,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IoError&gt; {
         <span class="self">self</span>.channel.send_io(IoMessage::UpdateStreamRegistration {
             token,
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
         })<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
@@ -1029,7 +1027,7 @@
         // the handler is no longer active and can be considered as
         // unregistered.
         </span><span class="kw">let _ </span>= <span class="self">self</span>.channel.send_io(IoMessage::RemoveHandler {
-            handler_id: <span class="self">self</span>.handler,
+            handler_id: <span class="self">self</span>.handler_id,
         });
     }
 }
@@ -1056,7 +1054,7 @@
     work_ready: Arc&lt;SCondvar&gt;,
     socket_workers:
         Vec&lt;(crossbeam_channel::Sender&lt;Work&lt;Message&gt;&gt;, SocketWorker)&gt;,
-    network_poll: Arc&lt;Poll&gt;,
+    network_poll_registry: Arc&lt;Registry&gt;,
 }
 
 <span class="kw">impl</span>&lt;Message&gt; IoManager&lt;Message&gt;
@@ -1066,7 +1064,7 @@
     </span><span class="kw">pub fn </span>start(
         event_loop: <span class="kw-2">&amp;mut </span>EventLoop&lt;IoManager&lt;Message&gt;&gt;,
         handlers: Arc&lt;RwLock&lt;Slab&lt;Arc&lt;<span class="kw">dyn </span>IoHandler&lt;Message&gt;&gt;&gt;&gt;&gt;,
-        network_poll: Arc&lt;Poll&gt;,
+        network_poll_registry: Arc&lt;Registry&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), IoError&gt; {
         <span class="kw">let </span>worker = crossbeam_deque::Worker::new_fifo();
         <span class="kw">let </span>stealer = worker.stealer();
@@ -1113,7 +1111,7 @@
             workers,
             work_ready,
             socket_workers,
-            network_poll,
+            network_poll_registry,
         };
         event_loop.run(<span class="kw-2">&amp;mut </span>io)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
@@ -1124,7 +1122,7 @@
 <span class="kw">where </span>Message: Send + Sync + <span class="lifetime">'static
 </span>{
     <span class="kw">type </span>Message = IoMessage&lt;Message&gt;;
-    <span class="kw">type </span>Timeout = Token;
+    <span class="kw">type </span>TimeoutState = Token;
 
     <span class="comment">// All network reading and writing is now handled by the network_poll, so
     // this event loop will not have any ready event.
@@ -1142,9 +1140,7 @@
                         event_loop.clear_timeout(<span class="kw-2">&amp;</span>timer.timeout);
                     }
                 } <span class="kw">else </span>{
-                    event_loop
-                        .timeout(token, timer.delay)
-                        .expect(<span class="string">"Error re-registering user timer"</span>);
+                    event_loop.timeout(token, timer.delay);
                 }
                 <span class="self">self</span>.worker_channel.push(Work {
                     work_type: WorkType::Timeout,
@@ -1205,9 +1201,7 @@
                 cancel_all,
             } =&gt; {
                 <span class="kw">let </span>timer_id = token + handler_id * TOKENS_PER_HANDLER;
-                <span class="kw">let </span>timeout = event_loop
-                    .timeout(Token(timer_id), delay)
-                    .expect(<span class="string">"Error registering user timer"</span>);
+                <span class="kw">let </span>timeout = event_loop.timeout(Token(timer_id), delay);
                 <span class="self">self</span>.timers.write().insert(
                     timer_id,
                     UserTimer {
@@ -1228,17 +1222,18 @@
                 <span class="macro">trace!</span>(<span class="string">"register stream {} {}"</span>, handler_id, token);
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(handler) = <span class="self">self</span>.handlers.read().get(handler_id) {
                     <span class="macro">trace!</span>(<span class="string">"do register stream {} {}"</span>, handler_id, token);
+                    <span class="kw">let </span>registry = <span class="self">self</span>.network_poll_registry.as_ref();
                     handler.register_stream(
                         token,
                         Token(token + handler_id * TOKENS_PER_HANDLER),
-                        <span class="self">self</span>.network_poll.as_ref(),
+                        registry,
                     );
                 }
             }
             IoMessage::DeregisterStream { handler_id, token } =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(handler) = <span class="self">self</span>.handlers.read().get(handler_id) {
-                    handler
-                        .deregister_stream(token, <span class="self">self</span>.network_poll.as_ref());
+                    <span class="kw">let </span>registry = <span class="self">self</span>.network_poll_registry.as_ref();
+                    handler.deregister_stream(token, registry);
                     <span class="comment">// unregister a timer associated with the token (if any)
                     </span><span class="kw">let </span>timer_id = token + handler_id * TOKENS_PER_HANDLER;
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(timer) = <span class="self">self</span>.timers.write().remove(<span class="kw-2">&amp;</span>timer_id) {
@@ -1248,10 +1243,11 @@
             }
             IoMessage::UpdateStreamRegistration { handler_id, token } =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(handler) = <span class="self">self</span>.handlers.read().get(handler_id) {
+                    <span class="kw">let </span>registry = <span class="self">self</span>.network_poll_registry.as_ref();
                     handler.update_stream(
                         token,
                         Token(token + handler_id * TOKENS_PER_HANDLER),
-                        <span class="self">self</span>.network_poll.as_ref(),
+                        registry,
                     );
                 }
             }
@@ -1292,9 +1288,7 @@
     }
 }
 
-<span class="kw">enum </span>Handlers&lt;Message&gt;
-<span class="kw">where </span>Message: Send
-{
+<span class="kw">enum </span>Handlers&lt;Message: Send&gt; {
     SharedCollection(Weak&lt;RwLock&lt;Slab&lt;Arc&lt;<span class="kw">dyn </span>IoHandler&lt;Message&gt;&gt;&gt;&gt;&gt;),
     Single(Weak&lt;<span class="kw">dyn </span>IoHandler&lt;Message&gt;&gt;),
 }
@@ -1312,9 +1306,7 @@
 
 <span class="doccomment">/// Allows sending messages into the event loop. All the IO handlers will get
 /// the message in the `message` callback.
-</span><span class="kw">pub struct </span>IoChannel&lt;Message&gt;
-<span class="kw">where </span>Message: Send
-{
+</span><span class="kw">pub struct </span>IoChannel&lt;Message: Send&gt; {
     channel: <span class="prelude-ty">Option</span>&lt;Sender&lt;IoMessage&lt;Message&gt;&gt;&gt;,
     handlers: Handlers&lt;Message&gt;,
 }
@@ -1418,16 +1410,16 @@
     host_channel: Mutex&lt;Sender&lt;IoMessage&lt;Message&gt;&gt;&gt;,
     handlers: Arc&lt;RwLock&lt;Slab&lt;Arc&lt;<span class="kw">dyn </span>IoHandler&lt;Message&gt;&gt;&gt;&gt;&gt;,
     network_poll_thread: Mutex&lt;<span class="prelude-ty">Option</span>&lt;JoinHandle&lt;()&gt;&gt;&gt;,
-    network_poll_stopped: Arc&lt;(Registration, SetReadiness)&gt;,
+    network_poll_stopped: Arc&lt;Waker&gt;,
+    network_poll: Arc&lt;Mutex&lt;Poll&gt;&gt;,
+    stop_token: usize,
 }
 
 <span class="kw">impl</span>&lt;Message&gt; IoService&lt;Message&gt;
 <span class="kw">where </span>Message: Send + Sync + <span class="lifetime">'static
 </span>{
     <span class="doccomment">/// Starts IO event loop
-    </span><span class="kw">pub fn </span>start(
-        network_poll: Arc&lt;Poll&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;IoService&lt;Message&gt;, IoError&gt; {
+    </span><span class="kw">pub fn </span>start(stop_token: usize) -&gt; <span class="prelude-ty">Result</span>&lt;IoService&lt;Message&gt;, IoError&gt; {
         <span class="macro">debug!</span>(<span class="string">"start IoService"</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>config = EventLoopBuilder::new();
         config.messages_per_tick(<span class="number">1024</span>);
@@ -1437,11 +1429,24 @@
         <span class="kw">let </span>handlers = Arc::new(RwLock::new(Slab::with_capacity(MAX_HANDLERS)));
         <span class="kw">let </span>h = handlers.clone();
 
+        <span class="kw">let </span>network_poll = Poll::new().expect(<span class="string">"Failed to create Poll instance"</span>);
+        <span class="kw">let </span>registry = network_poll
+            .registry()
+            .try_clone()
+            .expect(<span class="string">"Failed to clone registry for event loop"</span>);
+
+        <span class="kw">let </span>waker = Waker::new(network_poll.registry(), Token(stop_token))
+            .expect(<span class="string">"Failed to create Waker"</span>);
+
         <span class="kw">let </span>thread = thread::Builder::new()
             .name(<span class="string">"io_service"</span>.into())
             .spawn(<span class="kw">move </span>|| {
-                IoManager::&lt;Message&gt;::start(<span class="kw-2">&amp;mut </span>event_loop, h, network_poll)
-                    .expect(<span class="string">"Error starting IO service"</span>);
+                IoManager::&lt;Message&gt;::start(
+                    <span class="kw-2">&amp;mut </span>event_loop,
+                    h,
+                    Arc::new(registry),
+                )
+                .expect(<span class="string">"Error starting IO service"</span>);
             })
             .expect(<span class="string">"only one io_service thread, so it should not fail"</span>);
         <span class="prelude-val">Ok</span>(IoService {
@@ -1449,7 +1454,9 @@
             host_channel: Mutex::new(channel),
             handlers,
             network_poll_thread: Mutex::new(<span class="prelude-val">None</span>),
-            network_poll_stopped: Arc::new(Registration::new2()),
+            network_poll_stopped: Arc::new(waker),
+            network_poll: Arc::new(Mutex::new(network_poll)),
+            stop_token,
         })
     }
 
@@ -1458,9 +1465,9 @@
         <span class="comment">// Network poll should be closed before the main EventLoop, otherwise it
         // will send messages to a closed EventLoop.
         </span><span class="self">self</span>.network_poll_stopped
-            .<span class="number">1
-            </span>.set_readiness(Ready::readable())
-            .expect(<span class="string">"Set network_poll_stopped readiness failure"</span>);
+            .wake()
+            .expect(<span class="string">"Failed to wake network poll thread"</span>);
+
         <span class="kw">if let </span><span class="prelude-val">Some</span>(thread) = <span class="self">self</span>.network_poll_thread.lock().take() {
             thread.join().unwrap_or_else(|e| <span class="kw">match </span>e.downcast_ref::&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str&gt;() {
                 <span class="prelude-val">Some</span>(e) =&gt; <span class="macro">error!</span>(<span class="string">"Error joining network poll thread: {}"</span>, e),
@@ -1484,38 +1491,33 @@
     }
 
     <span class="kw">pub fn </span>start_network_poll(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, network_poll: Arc&lt;Poll&gt;, handler: Arc&lt;<span class="kw">dyn </span>IoHandler&lt;Message&gt;&gt;,
-        main_event_loop_channel: IoChannel&lt;Message&gt;, max_sessions: usize,
-        stop_token: usize,
+        <span class="kw-2">&amp;</span><span class="self">self</span>, handler: Arc&lt;<span class="kw">dyn </span>IoHandler&lt;Message&gt;&gt;, max_sessions: usize,
     ) {
-        network_poll
-            .register(
-                <span class="kw-2">&amp;</span><span class="self">self</span>.network_poll_stopped.<span class="number">0</span>,
-                Token(stop_token),
-                Ready::readable(),
-                PollOpt::edge(),
-            )
-            .expect(<span class="string">"network_poll register failure"</span>);
+        <span class="kw">let </span>main_event_loop_channel = <span class="self">self</span>.channel().clone();
+        <span class="kw">let </span>network_poll = <span class="self">self</span>.network_poll.clone();
+        <span class="kw">let </span>stop_token = <span class="self">self</span>.stop_token;
         <span class="kw">let </span>thread = thread::Builder::new()
             .name(<span class="string">"network_eventloop"</span>.into())
             .spawn(<span class="kw">move </span>|| {
                 <span class="kw">let </span><span class="kw-2">mut </span>events = Events::with_capacity(max_sessions);
                 <span class="kw">loop </span>{
-                    network_poll
-                        .poll(<span class="kw-2">&amp;mut </span>events, <span class="prelude-val">None</span>)
-                        .expect(<span class="string">"Network poll failure"</span>);
                     <span class="kw">let </span>_timer =
                         MeterTimer::time_func(NET_POLL_THREAD_TIMER.as_ref());
+
+                    {
+                        <span class="kw">let </span><span class="kw-2">mut </span>poll = network_poll.lock();
+                        poll.poll(<span class="kw-2">&amp;mut </span>events, <span class="prelude-val">Some</span>(Duration::from_secs(<span class="number">1</span>)))
+                            .expect(<span class="string">"Network poll failure"</span>);
+                    }
+
                     <span class="kw">for </span>event <span class="kw">in </span><span class="kw-2">&amp;</span>events {
-                        <span class="comment">// IoService is dropped and we should stop this thread
-                        </span><span class="kw">if </span>event.token().<span class="number">0 </span>== stop_token {
-                            <span class="macro">assert!</span>(event.readiness().is_readable());
+                        <span class="kw">if </span>event.token().<span class="number">0 </span>== stop_token {
                             <span class="kw">return</span>;
                         }
 
                         <span class="kw">let </span>handler_id = <span class="number">0</span>;
                         <span class="kw">let </span>token_id = event.token().<span class="number">0 </span>% TOKENS_PER_HANDLER;
-                        <span class="kw">if </span>event.readiness().is_readable() {
+                        <span class="kw">if </span>event.is_readable() {
                             handler.stream_readable(
                                 <span class="kw-2">&amp;</span>IoContext::new(
                                     main_event_loop_channel.clone(),
@@ -1524,7 +1526,7 @@
                                 token_id,
                             );
                         }
-                        <span class="kw">if </span>event.readiness().is_writable() {
+                        <span class="kw">if </span>event.is_writable() {
                             handler.stream_writable(
                                 <span class="kw-2">&amp;</span>IoContext::new(
                                     main_event_loop_channel.clone(),
@@ -1533,7 +1535,7 @@
                                 token_id,
                             );
                         }
-                        <span class="kw">if </span>event.readiness().is_hup() {
+                        <span class="kw">if </span>event.is_read_closed() || event.is_write_closed() {
                             handler.stream_hup(
                                 <span class="kw-2">&amp;</span>IoContext::new(
                                     main_event_loop_channel.clone(),

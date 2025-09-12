@@ -1,6 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/network/src/service.rs`."><title>service.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="network" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0-nightly (b11fbfbf3 2024-02-03)" data-channel="nightly" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
-            <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
-    <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../network/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/network/src/service.rs`."><title>service.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-cf3c48c1.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="network" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0-nightly (854f22563 2025-01-31)" data-channel="nightly" data-search-js="search-2d513d54.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-302de22f.js"></script><script defer src="../../static.files/src-script-8fee9dc5.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9b5d7e41.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">network/</div>service.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2162,35 +2161,7 @@
 <a href="#2160" id="2160">2160</a>
 <a href="#2161" id="2161">2161</a>
 <a href="#2162" id="2162">2162</a>
-<a href="#2163" id="2163">2163</a>
-<a href="#2164" id="2164">2164</a>
-<a href="#2165" id="2165">2165</a>
-<a href="#2166" id="2166">2166</a>
-<a href="#2167" id="2167">2167</a>
-<a href="#2168" id="2168">2168</a>
-<a href="#2169" id="2169">2169</a>
-<a href="#2170" id="2170">2170</a>
-<a href="#2171" id="2171">2171</a>
-<a href="#2172" id="2172">2172</a>
-<a href="#2173" id="2173">2173</a>
-<a href="#2174" id="2174">2174</a>
-<a href="#2175" id="2175">2175</a>
-<a href="#2176" id="2176">2176</a>
-<a href="#2177" id="2177">2177</a>
-<a href="#2178" id="2178">2178</a>
-<a href="#2179" id="2179">2179</a>
-<a href="#2180" id="2180">2180</a>
-<a href="#2181" id="2181">2181</a>
-<a href="#2182" id="2182">2182</a>
-<a href="#2183" id="2183">2183</a>
-<a href="#2184" id="2184">2184</a>
-<a href="#2185" id="2185">2185</a>
-<a href="#2186" id="2186">2186</a>
-<a href="#2187" id="2187">2187</a>
-<a href="#2188" id="2188">2188</a>
-<a href="#2189" id="2189">2189</a>
-<a href="#2190" id="2190">2190</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright 2019 Conflux Foundation. All rights reserved.
+<a href="#2163" id="2163">2163</a></pre></div><pre class="rust"><code><span class="comment">// Copyright 2019 Conflux Foundation. All rights reserved.
 // Conflux is free software and distributed under GNU General Public License.
 // See http://www.gnu.org/licenses/
 
@@ -2208,7 +2179,10 @@
 };
 
 <span class="kw">use </span>keccak_hash::keccak;
-<span class="kw">use </span>mio::{tcp::<span class="kw-2">*</span>, udp::<span class="kw-2">*</span>, <span class="kw-2">*</span>};
+<span class="kw">use </span>mio::{
+    net::{TcpListener, TcpStream, UdpSocket},
+    Interest, Registry, Token,
+};
 <span class="kw">use </span>parity_path::restrict_permissions_owner;
 <span class="kw">use </span>parking_lot::{Mutex, RwLock};
 <span class="kw">use </span>rlp::{Decodable, DecoderError, Encodable, Rlp, RlpStream};
@@ -2233,7 +2207,9 @@
 <span class="kw">use crate</span>::{
     discovery::Discovery,
     handshake::BYPASS_CRYPTOGRAPHY,
-    iolib::<span class="kw-2">*</span>,
+    iolib::{
+        IoContext, IoHandler, IoService, MapNonBlock, StreamToken, TimerToken,
+    },
     ip_utils::{map_external_address, select_public_address},
     node_database::NodeDatabase,
     node_table::<span class="kw-2">*</span>,
@@ -2360,7 +2336,6 @@
 </span><span class="kw">pub struct </span>NetworkService {
     <span class="kw">pub </span>io_service: <span class="prelude-ty">Option</span>&lt;IoService&lt;NetworkIoMessage&gt;&gt;,
     <span class="kw">pub </span>inner: <span class="prelude-ty">Option</span>&lt;Arc&lt;NetworkServiceInner&gt;&gt;,
-    network_poll: Arc&lt;Poll&gt;,
     config: NetworkConfiguration,
 }
 
@@ -2369,7 +2344,6 @@
         NetworkService {
             io_service: <span class="prelude-val">None</span>,
             inner: <span class="prelude-val">None</span>,
-            network_poll: Arc::new(Poll::new().unwrap()),
             config,
         }
     }
@@ -2384,29 +2358,12 @@
 
     <span class="kw">pub fn </span>is_test_mode(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool { <span class="self">self</span>.config.test_mode }
 
-    <span class="kw">pub fn </span>start_network_poll(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>handler = <span class="self">self</span>.inner.as_ref().unwrap().clone();
-        <span class="kw">let </span>main_event_loop_channel =
-            <span class="self">self</span>.io_service.as_ref().unwrap().channel();
-        <span class="self">self</span>.io_service
-            .as_ref()
-            .expect(<span class="string">"Already set"</span>)
-            .start_network_poll(
-                <span class="self">self</span>.network_poll.clone(),
-                handler,
-                main_event_loop_channel,
-                MAX_SESSIONS,
-                STOP_NET_POLL,
-            );
-        <span class="prelude-val">Ok</span>(())
-    }
-
     <span class="doccomment">/// Create and start the event loop inside the NetworkService
     </span><span class="kw">pub fn </span>initialize(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>, pos_pub_keys: (ConsensusPublicKey, ConsensusVRFPublicKey),
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>raw_io_service =
-            IoService::&lt;NetworkIoMessage&gt;::start(<span class="self">self</span>.network_poll.clone())<span class="question-mark">?</span>;
+            IoService::&lt;NetworkIoMessage&gt;::start(STOP_NET_POLL)<span class="question-mark">?</span>;
         <span class="self">self</span>.io_service = <span class="prelude-val">Some</span>(raw_io_service);
 
         <span class="kw">if </span><span class="self">self</span>.inner.is_none() {
@@ -2432,18 +2389,10 @@
 
     <span class="kw">pub fn </span>start(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let </span>handler = <span class="self">self</span>.inner.as_ref().unwrap().clone();
-        <span class="kw">let </span>main_event_loop_channel =
-            <span class="self">self</span>.io_service.as_ref().unwrap().channel();
         <span class="self">self</span>.io_service
             .as_ref()
             .expect(<span class="string">"Already set"</span>)
-            .start_network_poll(
-                <span class="self">self</span>.network_poll.clone(),
-                handler,
-                main_event_loop_channel,
-                MAX_SESSIONS,
-                STOP_NET_POLL,
-            );
+            .start_network_poll(handler, MAX_SESSIONS);
     }
 
     <span class="doccomment">/// Add a P2P peer to the client as a trusted node
@@ -2749,7 +2698,7 @@
 
         <span class="macro">info!</span>(<span class="string">"Self node id: {:?}"</span>, <span class="kw-2">*</span>keys.public());
 
-        <span class="kw">let </span>tcp_listener = TcpListener::bind(<span class="kw-2">&amp;</span>listen_address)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tcp_listener = TcpListener::bind(listen_address)<span class="question-mark">?</span>;
         listen_address = SocketAddr::new(
             listen_address.ip(),
             tcp_listener.local_addr()<span class="question-mark">?</span>.port(),
@@ -2763,7 +2712,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>udp_addr = local_endpoint.address;
         udp_addr.set_port(local_endpoint.udp_port);
         <span class="kw">let </span>udp_socket =
-            UdpSocket::bind(<span class="kw-2">&amp;</span>udp_addr).expect(<span class="string">"Error binding UDP socket"</span>);
+            UdpSocket::bind(udp_addr).expect(<span class="string">"Error binding UDP socket"</span>);
 
         <span class="kw">let </span>public_address = config.public_address;
         <span class="kw">let </span>public_endpoint = <span class="kw">match </span>public_address {
@@ -3142,7 +3091,7 @@
                 <span class="kw">return</span>;
             }
 
-            <span class="kw">match </span>TcpStream::connect(<span class="kw-2">&amp;</span>address) {
+            <span class="kw">match </span>TcpStream::connect(address) {
                 <span class="prelude-val">Ok</span>(socket) =&gt; {
                     <span class="macro">trace!</span>(<span class="string">"{}: connecting to {:?}"</span>, id, address);
                     (socket, address)
@@ -3605,7 +3554,7 @@
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0u8</span>; MAX_DATAGRAM_SIZE];
-        <span class="kw">match </span>udp_socket.recv_from(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="kw">match </span>udp_socket.recv_from(<span class="kw-2">&amp;mut </span>buf).map_non_block() {
             <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((len, address))) =&gt; <span class="self">self
                 </span>.on_udp_packet(<span class="kw-2">&amp;</span>buf[<span class="number">0</span>..len], address)
                 .unwrap_or_else(|e| {
@@ -3637,7 +3586,10 @@
         <span class="kw">let </span>udp_socket = <span class="self">self</span>.udp_socket.lock();
         <span class="kw">let </span><span class="kw-2">mut </span>udp_channel = <span class="self">self</span>.udp_channel.write();
         <span class="kw">while let </span><span class="prelude-val">Some</span>(data) = udp_channel.dequeue_send() {
-            <span class="kw">match </span>udp_socket.send_to(<span class="kw-2">&amp;</span>data.payload, <span class="kw-2">&amp;</span>data.address) {
+            <span class="kw">match </span>udp_socket
+                .send_to(<span class="kw-2">&amp;</span>data.payload, data.address)
+                .map_non_block()
+            {
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(size)) <span class="kw">if </span>size == data.payload.len() =&gt; {}
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; {
                     <span class="macro">warn!</span>(<span class="string">"UDP sent incomplete datagram"</span>);
@@ -3967,34 +3919,32 @@
     }
 
     <span class="kw">fn </span>register_stream(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, stream: StreamToken, reg: Token, event_loop: <span class="kw-2">&amp;</span>Poll,
+        <span class="kw-2">&amp;</span><span class="self">self</span>, stream: StreamToken, reg: Token, poll_registry: <span class="kw-2">&amp;</span>Registry,
     ) {
         <span class="kw">match </span>stream {
             FIRST_SESSION..=LAST_SESSION =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(session) = <span class="self">self</span>.sessions.get(stream) {
                     session
                         .write()
-                        .register_socket(reg, event_loop)
+                        .register_socket(reg, poll_registry)
                         .expect(<span class="string">"Error registering socket"</span>);
                 }
             }
             TCP_ACCEPT =&gt; {
-                event_loop
+                poll_registry
                     .register(
-                        <span class="kw-2">&amp;*</span><span class="self">self</span>.tcp_listener.lock(),
+                        <span class="kw-2">&amp;mut *</span><span class="self">self</span>.tcp_listener.lock(),
                         Token(TCP_ACCEPT),
-                        Ready::all(),
-                        PollOpt::edge(),
+                        Interest::READABLE | Interest::WRITABLE,
                     )
                     .expect(<span class="string">"Error registering stream"</span>);
             }
             UDP_MESSAGE =&gt; {
-                event_loop
+                poll_registry
                     .register(
-                        <span class="kw-2">&amp;*</span><span class="self">self</span>.udp_socket.lock(),
+                        <span class="kw-2">&amp;mut *</span><span class="self">self</span>.udp_socket.lock(),
                         reg,
-                        Ready::all(),
-                        PollOpt::edge(),
+                        Interest::READABLE | Interest::WRITABLE,
                     )
                     .expect(<span class="string">"Error registering UDP socket"</span>);
             }
@@ -4002,13 +3952,13 @@
         }
     }
 
-    <span class="kw">fn </span>deregister_stream(<span class="kw-2">&amp;</span><span class="self">self</span>, stream: StreamToken, event_loop: <span class="kw-2">&amp;</span>Poll) {
+    <span class="kw">fn </span>deregister_stream(<span class="kw-2">&amp;</span><span class="self">self</span>, stream: StreamToken, poll_registry: <span class="kw-2">&amp;</span>Registry) {
         <span class="kw">match </span>stream {
             FIRST_SESSION..=LAST_SESSION =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(session) = <span class="self">self</span>.sessions.get(stream) {
-                    <span class="kw">let </span>sess = session.write();
+                    <span class="kw">let </span><span class="kw-2">mut </span>sess = session.write();
                     <span class="kw">if </span>sess.expired() {
-                        sess.deregister_socket(event_loop)
+                        sess.deregister_socket(poll_registry)
                             .expect(<span class="string">"Error deregistering socket"</span>);
                         <span class="kw">if let </span><span class="prelude-val">Some</span>(node_id) = sess.id() {
                             <span class="self">self</span>.node_db.write().note_failure(
@@ -4026,41 +3976,35 @@
     }
 
     <span class="kw">fn </span>update_stream(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, stream: StreamToken, reg: Token, event_loop: <span class="kw-2">&amp;</span>Poll,
+        <span class="kw-2">&amp;</span><span class="self">self</span>, stream: StreamToken, reg: Token, poll_registry: <span class="kw-2">&amp;</span>Registry,
     ) {
         <span class="kw">match </span>stream {
             FIRST_SESSION..=LAST_SESSION =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(session) = <span class="self">self</span>.sessions.get(stream) {
                     session
                         .write()
-                        .update_socket(reg, event_loop)
+                        .update_socket(reg, poll_registry)
                         .expect(<span class="string">"Error updating socket"</span>);
                 }
             }
-            TCP_ACCEPT =&gt; event_loop
+            TCP_ACCEPT =&gt; poll_registry
                 .reregister(
-                    <span class="kw-2">&amp;*</span><span class="self">self</span>.tcp_listener.lock(),
+                    <span class="kw-2">&amp;mut *</span><span class="self">self</span>.tcp_listener.lock(),
                     Token(TCP_ACCEPT),
-                    Ready::all(),
-                    PollOpt::edge(),
+                    Interest::READABLE | Interest::WRITABLE,
                 )
                 .expect(<span class="string">"Error reregistering stream"</span>),
             UDP_MESSAGE =&gt; {
-                <span class="kw">let </span>udp_socket = <span class="self">self</span>.udp_socket.lock();
+                <span class="kw">let </span><span class="kw-2">mut </span>udp_socket = <span class="self">self</span>.udp_socket.lock();
                 <span class="kw">let </span>udp_channel = <span class="self">self</span>.udp_channel.read();
 
                 <span class="kw">let </span>registration = <span class="kw">if </span>udp_channel.any_sends_queued() {
-                    Ready::readable() | Ready::writable()
+                    Interest::READABLE | Interest::WRITABLE
                 } <span class="kw">else </span>{
-                    Ready::readable()
+                    Interest::READABLE
                 };
-                event_loop
-                    .reregister(
-                        <span class="kw-2">&amp;*</span>udp_socket,
-                        reg,
-                        registration,
-                        PollOpt::edge(),
-                    )
+                poll_registry
+                    .reregister(<span class="kw-2">&amp;mut *</span>udp_socket, reg, registration)
                     .expect(<span class="string">"Error reregistering UDP socket"</span>);
             }
             <span class="kw">_ </span>=&gt; <span class="macro">warn!</span>(<span class="string">"Unexpected stream update"</span>),
