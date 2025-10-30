@@ -282,7 +282,44 @@
 <a href="#281" id="281">281</a>
 <a href="#282" id="282">282</a>
 <a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a></pre></div><pre class="rust"><code><span class="kw">use </span>alloy_rpc_types_trace::geth::{
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a></pre></div><pre class="rust"><code><span class="kw">use </span>alloy_rpc_types_trace::geth::{
     GethDebugBuiltInTracerType,
     GethDebugTracerType::{BuiltInTracer, JsTracer},
     GethDebugTracingCallOptions, GethDebugTracingOptions, GethTrace, NoopFrame,
@@ -290,7 +327,7 @@
 };
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>cfx_rpc_eth_api::DebugApiServer;
-<span class="kw">use </span>cfx_rpc_eth_types::{BlockNumber, TransactionRequest};
+<span class="kw">use </span>cfx_rpc_eth_types::{BlockId, BlockProperties, TransactionRequest};
 <span class="kw">use </span>cfx_rpc_utils::error::jsonrpsee_error_helpers::invalid_params_msg;
 <span class="kw">use </span>cfx_types::{AddressSpaceUtil, Space, H256, U256};
 <span class="kw">use </span>cfxcore::{
@@ -301,7 +338,7 @@
 <span class="kw">use </span>primitives::{
     Block, BlockHashOrEpochNumber, BlockHeaderBuilder, EpochNumber,
 };
-<span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>std::{sync::Arc, vec};
 
 <span class="kw">pub struct </span>DebugApi {
     consensus: SharedConsensusGraph,
@@ -320,19 +357,15 @@
 
     <span class="kw">pub fn </span>consensus_graph(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>ConsensusGraph { <span class="kw-2">&amp;</span><span class="self">self</span>.consensus }
 
-    <span class="kw">pub fn </span>get_block_epoch_num(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, block: BlockNumber,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;u64, String&gt; {
+    <span class="kw">pub fn </span>get_block_epoch_num(<span class="kw-2">&amp;</span><span class="self">self</span>, block: BlockId) -&gt; <span class="prelude-ty">Result</span>&lt;u64, String&gt; {
         <span class="kw">let </span>num = <span class="kw">match </span>block {
-            BlockNumber::Num(block_number) =&gt; block_number,
-            BlockNumber::Latest
-            | BlockNumber::Safe
-            | BlockNumber::Finalized =&gt; {
+            BlockId::Num(block_number) =&gt; block_number,
+            BlockId::Latest | BlockId::Safe | BlockId::Finalized =&gt; {
                 <span class="kw">let </span>epoch_num = block.try_into().expect(<span class="string">"should success"</span>);
                 <span class="self">self</span>.consensus_graph()
                     .get_height_from_epoch_number(epoch_num)<span class="question-mark">?
             </span>}
-            BlockNumber::Hash {
+            BlockId::Hash {
                 hash,
                 require_canonical,
             } =&gt; <span class="self">self
@@ -348,8 +381,7 @@
     }
 
     <span class="kw">pub fn </span>trace_call(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>request: TransactionRequest,
-        block_number: <span class="prelude-ty">Option</span>&lt;BlockNumber&gt;,
+        <span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>request: TransactionRequest, block_number: <span class="prelude-ty">Option</span>&lt;BlockId&gt;,
         opts: <span class="prelude-ty">Option</span>&lt;GethDebugTracingCallOptions&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;GethTrace, CoreError&gt; {
         <span class="kw">if </span>request.from.is_none() {
@@ -549,7 +581,7 @@
     }
 
     <span class="kw">async fn </span>debug_trace_block_by_number(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, block: BlockNumber, opts: <span class="prelude-ty">Option</span>&lt;GethDebugTracingOptions&gt;,
+        <span class="kw-2">&amp;</span><span class="self">self</span>, block: BlockId, opts: <span class="prelude-ty">Option</span>&lt;GethDebugTracingOptions&gt;,
     ) -&gt; RpcResult&lt;Vec&lt;TraceResult&gt;&gt; {
         <span class="kw">let </span>num = <span class="self">self
             </span>.get_block_epoch_num(block)
@@ -559,11 +591,53 @@
     }
 
     <span class="kw">async fn </span>debug_trace_call(
-        <span class="kw-2">&amp;</span><span class="self">self</span>, request: TransactionRequest, block_number: <span class="prelude-ty">Option</span>&lt;BlockNumber&gt;,
+        <span class="kw-2">&amp;</span><span class="self">self</span>, request: TransactionRequest, block_number: <span class="prelude-ty">Option</span>&lt;BlockId&gt;,
         opts: <span class="prelude-ty">Option</span>&lt;GethDebugTracingCallOptions&gt;,
     ) -&gt; RpcResult&lt;GethTrace&gt; {
         <span class="self">self</span>.trace_call(request, block_number, opts)
             .map_err(|e| e.into())
+    }
+
+    <span class="kw">async fn </span>debug_block_properties(
+        <span class="kw-2">&amp;</span><span class="self">self</span>, block_number: BlockId,
+    ) -&gt; RpcResult&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;BlockProperties&gt;&gt;&gt; {
+        <span class="kw">let </span>hashes = <span class="self">self
+            </span>.consensus
+            .get_block_hashes_by_epoch_or_block_hash(block_number.into())
+            .map_err(|err| invalid_params_msg(<span class="kw-2">&amp;</span>err.to_string()))<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>blocks = <span class="self">self
+            </span>.consensus
+            .data_manager()
+            .blocks_by_hash_list(<span class="kw-2">&amp;</span>hashes, <span class="bool-val">false</span>)
+            .ok_or_else(|| invalid_params_msg(<span class="string">"blocks should exist"</span>))<span class="question-mark">?</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="macro">vec!</span>[];
+
+        <span class="kw">for </span>block <span class="kw">in </span>blocks {
+            <span class="kw">let </span>block_props = BlockProperties {
+                tx_hash: <span class="prelude-val">None</span>,
+                inner_block_hash: block.hash(),
+                coinbase: <span class="kw-2">*</span>block.block_header.author(),
+                difficulty: <span class="kw-2">*</span>block.block_header.difficulty(),
+                gas_limit: <span class="kw-2">*</span>block.block_header.gas_limit(),
+                timestamp: block.block_header.timestamp().into(),
+                base_fee_per_gas: block
+                    .block_header
+                    .base_price()
+                    .map(|v| v.in_space(Space::Ethereum).clone()),
+            };
+
+            <span class="kw">for </span>tx <span class="kw">in </span>block.transactions.iter() {
+                <span class="kw">if </span>tx.space() == Space::Ethereum {
+                    <span class="kw">let </span><span class="kw-2">mut </span>props = block_props.clone();
+                    props.tx_hash = <span class="prelude-val">Some</span>(tx.hash());
+                    res.push(props);
+                }
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(res))
     }
 }
 </code></pre></div></section></main></body></html>
