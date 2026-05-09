@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["XDX_NAME","XUS_NAME"],"fn":["coin_name","xdx_type_tag","xus_tag"],"static":["XDX_MODULE","XDX_STRUCT_NAME"]};

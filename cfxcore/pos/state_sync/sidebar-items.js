@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["bootstrapper","chunk_request","chunk_response","client","coordinator","error","executor_proxy","network","shared_components"]};
