@@ -141,7 +141,7 @@
 <a href=#141 id=141 data-nosnippet>141</a></span><span class="kw">impl </span>CommonRpcImpl {
 <a href=#142 id=142 data-nosnippet>142</a>    <span class="kw">pub fn </span>best_block_hash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RpcResult&lt;H256&gt; {
 <a href=#143 id=143 data-nosnippet>143</a>        <span class="macro">info!</span>(<span class="string">"RPC Request: cfx_getBestBlockHash()"</span>);
-<a href=#144 id=144 data-nosnippet>144</a>        <span class="prelude-val">Ok</span>(<span class="self">self</span>.consensus.best_block_hash().into())
+<a href=#144 id=144 data-nosnippet>144</a>        <span class="prelude-val">Ok</span>(<span class="self">self</span>.consensus.best_block_hash())
 <a href=#145 id=145 data-nosnippet>145</a>    }
 <a href=#146 id=146 data-nosnippet>146</a>
 <a href=#147 id=147 data-nosnippet>147</a>    <span class="kw">pub fn </span>gas_price(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CoreResult&lt;U256&gt; {
@@ -236,7 +236,7 @@
 <a href=#236 id=236 data-nosnippet>236</a>                .expect(<span class="string">"failed to convert scaled risk to bigInt"</span>);
 <a href=#237 id=237 data-nosnippet>237</a>            <span class="kw">let </span>(sign, big_endian_bytes) = scaled_risk.to_bytes_be();
 <a href=#238 id=238 data-nosnippet>238</a>            <span class="macro">assert_ne!</span>(sign, num_bigint::Sign::Minus);
-<a href=#239 id=239 data-nosnippet>239</a>            <span class="kw">let </span>rpc_result = U256::from(big_endian_bytes.as_slice());
+<a href=#239 id=239 data-nosnippet>239</a>            <span class="kw">let </span>rpc_result = U256::from_big_endian(big_endian_bytes.as_slice());
 <a href=#240 id=240 data-nosnippet>240</a>            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(rpc_result.into()))
 <a href=#241 id=241 data-nosnippet>241</a>        }
 <a href=#242 id=242 data-nosnippet>242</a>    }
@@ -273,7 +273,7 @@
 <a href=#273 id=273 data-nosnippet>273</a>    ) -&gt; CoreResult&lt;RpcBlock&gt; {
 <a href=#274 id=274 data-nosnippet>274</a>        <span class="kw">let </span>consensus_graph = <span class="self">self</span>.consensus_graph();
 <a href=#275 id=275 data-nosnippet>275</a>        <span class="kw">let </span>inner = <span class="kw-2">&amp;*</span>consensus_graph.inner.read();
-<a href=#276 id=276 data-nosnippet>276</a>        <span class="kw">let </span>epoch_number = epoch_number.as_usize() <span class="kw">as </span>u64;
+<a href=#276 id=276 data-nosnippet>276</a>        <span class="kw">let </span>epoch_number = epoch_number.as_u64();
 <a href=#277 id=277 data-nosnippet>277</a>
 <a href=#278 id=278 data-nosnippet>278</a>        <span class="macro">info!</span>(
 <a href=#279 id=279 data-nosnippet>279</a>            <span class="string">"RPC Request: cfx_getBlockByHashWithPivotAssumption block_hash={:?} pivot_hash={:?} epoch_number={:?}"</span>,
